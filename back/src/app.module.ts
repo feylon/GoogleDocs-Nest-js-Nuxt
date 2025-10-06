@@ -9,6 +9,7 @@ import { BuildModule } from './Build/entity/Build.module';
 import { DepartmentModule } from './Department/Department.module';
 import { ServiceModule } from './Services/Service.module';
 import { WorkModule } from './Work/work.module';
+import { ApealModule } from './Apeals/Apeal.module';
 
 @Module({
   imports: [
@@ -36,7 +37,8 @@ import { WorkModule } from './Work/work.module';
     BuildModule,
     DepartmentModule,
     ServiceModule,
-    WorkModule
+    WorkModule,
+    ApealModule
 
   ],
   controllers: [AppController],
