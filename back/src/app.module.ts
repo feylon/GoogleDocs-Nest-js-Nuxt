@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from "@nestjs/typeorm"
 import { UserModule } from './User/User.module';
 import { RoleModule } from './Role/Role.module';
+import { BuildModule } from './Build/entity/Build.module';
+import { Department } from './Department/entity/Department.entity';
 
 @Module({
   imports: [
@@ -28,7 +30,9 @@ import { RoleModule } from './Role/Role.module';
 
     // Modulllar
     UserModule,
-    RoleModule
+    RoleModule,
+    BuildModule,
+    Department
 
   ],
   controllers: [AppController],

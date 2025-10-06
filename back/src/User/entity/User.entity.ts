@@ -1,6 +1,7 @@
 import { Role } from "src/Role/entity/role.entity";
+import { Service } from "src/Services/entity/Services.entity";
 import { Work } from "src/Work/entity/Work.entity";
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({ name: "Users" })
 export class User {
@@ -79,4 +80,9 @@ export class User {
         }
     })
     works : Work;
+
+
+    // services[] => user
+    @OneToMany(()=>Service, (service=>service.user), {cascade : true})
+    services : Service[]
 }
