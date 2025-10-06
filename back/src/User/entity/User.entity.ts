@@ -65,7 +65,7 @@ export class User {
 
     @ManyToMany(() => Work, (work => work.users), {
         cascade: true,
-        eager: true
+        eager: false
     })
 
     // User[] => Work[]

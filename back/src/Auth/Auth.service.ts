@@ -6,26 +6,65 @@ import { User } from "src/User/entity/User.entity";
 import { Repository } from "typeorm";
 import { LoginDTO } from "./DTO/dto";
 import { SENDBODY } from "GlobalTypes/GlobalTypes";
-
+import * as bcrypt from "bcrypt";
+import { RefreshTokenService } from "src/RefreshToken/RefreshToken.service";
 @Injectable()
 export class AuthService {
 
     constructor(
         @InjectRepository(User) private UserRepository: Repository<User>,
         @InjectRepository(RefreshToken) private RefreshTokenRepository: Repository<RefreshToken>,
-        @InjectRepository(Role) private RoleRepository: Repository<Role>
+        @InjectRepository(Role) private RoleRepository: Repository<Role>,
+        private readonly RefreshTokenService : RefreshTokenService
     ) { }
+
+    async checkHash(password: string, hash: string): Promise<boolean> {
+        const isMatch = await bcrypt.compare(password, hash);
+        return isMatch;
+    }
 
     async LoginFunction(body: LoginDTO): Promise<SENDBODY> {
         const { login, password } = body;
         try {
+
+            const user = await this.UserRepository.findOne({
+                where: {
+                    login
+                },
+                relations: {
+                    role: true
+                },
+                select: {
+                    id: true,
+                    password: true,
+                    role: {
+                        name: true,
+                    }
+                }
+            });
+            if (!user) throw new HttpException({
+                message: "User topilmadi"
+            }, HttpStatus.UNAUTHORIZED);
+
+            const isMatch = await this.checkHash(password, user.password);
+            if (!isMatch) throw new HttpException({
+                message: "Parol yoki login xato",
+            }, HttpStatus.UNAUTHORIZED);
+            
+            const userObj = {
+                id : user?.id,
+                role : user?.role?.name
+            }
+
             return {
-                data : "sdjkcsdjc",
-                success : true,
-                message : "Test uchun bu mavjud",
-                
+                data: userObj,
+                success: true,
+                message: "Test uchun bu mavjud",
+
             }
         } catch (error) {
+
+            if (error instanceof HttpException) throw error;
             console.log("Login function error", error);
             throw new HttpException({}, HttpStatus.INTERNAL_SERVER_ERROR)
         }
