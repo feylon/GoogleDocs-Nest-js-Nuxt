@@ -1,4 +1,4 @@
-export enum EStatus {
+export enum E_Status {
     Done = 'done',          // Bajarilgan
     Process = 'process',    // Jarayonda (bajarilmoqda)
     Rejected = 'rejected',  // Rad etilgan

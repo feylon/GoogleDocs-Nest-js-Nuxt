@@ -1,3 +1,4 @@
+import { Apeal } from "src/Apeals/entity/Apeal.entity";
 import { Role } from "src/Role/entity/role.entity";
 import { Service } from "src/Services/entity/Services.entity";
 import { Work } from "src/Work/entity/Work.entity";
@@ -56,33 +57,43 @@ export class User {
     // Bog'lanishlar User[] => Role
 
     @ManyToOne(() => Role, (role) => role.users, {
-        nullable : false,
-        onDelete : "RESTRICT"
+        nullable: false,
+        onDelete: "RESTRICT"
     })
     role: Role;
 
-    @ManyToMany(()=>Work, (work=>work.users), {
-        cascade : true,
-        eager : true
+    @ManyToMany(() => Work, (work => work.users), {
+        cascade: true,
+        eager: true
     })
 
     // User[] => Work[]
     @JoinTable({
-        name : "user_works",
-        joinColumn : {
-            referencedColumnName : "id",
-            name : "user_id"
-            
+        name: "user_works",
+        joinColumn: {
+            referencedColumnName: "id",
+            name: "user_id"
+
         },
-        inverseJoinColumn : {
-            name : "work_id",
-            referencedColumnName : "id"
+        inverseJoinColumn: {
+            name: "work_id",
+            referencedColumnName: "id"
         }
     })
-    works : Work;
+    works: Work;
 
 
     // services[] => user
-    @OneToMany(()=>Service, (service=>service.user), {cascade : true})
-    services : Service[]
+    @OneToMany(() => Service, (service => service.user), { cascade: true })
+    services: Service[];
+
+
+    // Foydalanuvchi junatgan murojaatlar ro'yxati (apeals) User => Apeal.fromUser []
+    @OneToMany(() => Apeal, (apeals => apeals.fromUser))
+    fromUserApeals: Apeal[];
+
+
+    // Apealni qabulq qiluvchi va bajaruvchi (apeals) User => Apeal.responsible []
+    @OneToMany(() => Apeal, (apeal => apeal.responsible))
+    getApeals: Apeal[];
 }
