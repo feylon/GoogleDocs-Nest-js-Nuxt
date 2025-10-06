@@ -12,6 +12,7 @@ import { WorkModule } from './Work/work.module';
 import { ApealModule } from './Apeals/Apeal.module';
 import { RefreshTokenModule } from './RefreshToken/RefreshToken.module';
 import { StarterModule } from './starter/starter.module';
+import { AuthModule } from './Auth/Auth.module';
 
 @Module({
   imports: [
@@ -41,7 +42,8 @@ import { StarterModule } from './starter/starter.module';
     WorkModule,
     ApealModule,
     RefreshTokenModule,
-    StarterModule
+    StarterModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
