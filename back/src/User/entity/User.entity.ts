@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Role } from "src/Role/entity/role.entity";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity()
+@Entity({ name: "Users" })
 export class User {
 
     @PrimaryGeneratedColumn('uuid')
@@ -24,24 +25,37 @@ export class User {
     @Column({ type: 'varchar', length: 500, nullable: false })
     password: string;
 
-    @Column()
-    birhtday: Date;
+    @Column({ type: 'date', nullable: false })
+    birthday: Date;
 
-    email: string;
+    @Column({ type: 'varchar', unique: true })
+    email?: string;
 
-
+    @Column({ type: "varchar", unique: true, length: 16, nullable: false })
     JSHSHIR: string;
 
+    @Column({ type: "varchar", unique: true, length: 500, nullable: false })
     phone: string;
 
+    @Column({ type: 'varchar', length: 500 })
     resetPasswordToken: string;
 
+    @Column({ type: "boolean", default: true })
     isActive: boolean;
 
+    @Column({ type: "boolean", default: false })
     isDelete: boolean;
 
+    @CreateDateColumn()
     createdAt: Date;
 
-
+    @UpdateDateColumn()
     updatedAt: Date;
+    // Bog'lanishlar User[] => Role
+
+    @ManyToOne(() => Role, (role) => role.users, {
+        nullable : false,
+        onDelete : "RESTRICT"
+    })
+    role: Role;
 }
