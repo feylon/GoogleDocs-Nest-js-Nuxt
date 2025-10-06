@@ -10,40 +10,47 @@ import { DepartmentModule } from './Department/Department.module';
 import { ServiceModule } from './Services/Service.module';
 import { WorkModule } from './Work/work.module';
 import { ApealModule } from './Apeals/Apeal.module';
+import { RefreshTokenModule } from './RefreshToken/RefreshToken.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ".env",
-      isGlobal: true
+      envFilePath: '.env',
+      isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      database: process.env.DB_NAME,
-      username: process.env.DB_USER,
-      password: (process.env.DB_PASSWORD as string),
+      type: 'postgres',
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT as string),
-      type: "postgres",
-      autoLoadEntities: true,
-      synchronize: true,
-      dropSchema: true
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
 
+      // Entity va migration yo‘llari
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      migrations: [__dirname + '/migrations/*{.ts,.js}'],
+
+      synchronize: false, // ❌ endi TypeORM avtomatik o‘zgartirmaydi
+      migrationsRun: false, // ❌ Nest startda avtomatik migration ishlamasin
+      autoLoadEntities: true,
+      logging: true, // foydali: querylarni ko‘rsatadi
     }),
 
-
-    // Modulllar
+    // Modullar
     UserModule,
     RoleModule,
     BuildModule,
     DepartmentModule,
     ServiceModule,
     WorkModule,
-    ApealModule
-
+    ApealModule,
+    RefreshTokenModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
+
+
 export class AppModule implements OnModuleInit {
   onModuleInit() {
     console.log("Start")

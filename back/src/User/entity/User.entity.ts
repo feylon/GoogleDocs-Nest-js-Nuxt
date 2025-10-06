@@ -2,7 +2,8 @@ import { Apeal } from "src/Apeals/entity/Apeal.entity";
 import { Role } from "src/Role/entity/role.entity";
 import { Service } from "src/Services/entity/Services.entity";
 import { Work } from "src/Work/entity/Work.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import * as bcrypt from "bcrypt"
 
 @Entity({ name: "Users" })
 export class User {
@@ -80,7 +81,7 @@ export class User {
             referencedColumnName: "id"
         }
     })
-    works: Work;
+    works: Work[];
 
 
     // services[] => user
@@ -99,14 +100,28 @@ export class User {
 
 
     // Admin_id = >User[]
-    @ManyToOne(()=>User, (user=>user.users), {nullable : true, onDelete : "SET NULL"})
-    @JoinColumn({name : "admin_id"})
-    admin : User;
+    @ManyToOne(() => User, (user => user.users), { nullable: true, onDelete: "SET NULL" })
+    @JoinColumn({ name: "admin_id" })
+    admin: User;
 
     // User[] => Admin[] 
-    @OneToMany(()=>User, (user=>user.admin))
-    users : User[];
+    @OneToMany(() => User, (user => user.admin))
+    users: User[];
 
+    private async hashPassword(str: string): Promise<string> {
+        const salt = await bcrypt.genSalt(10);
 
-    // @OneToMany(()=>Service, (service=>service.user))
+        const hashPassword = await bcrypt.hash(str, salt);
+
+        return hashPassword;
+
+    }
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    async CreateOrUpdatedUser() {
+        if (this.password && !this.password.startsWith('$2b$')) {
+            this.password = await this.hashPassword(this.password)
+        }
+    }
 }
