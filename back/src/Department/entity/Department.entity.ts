@@ -1,5 +1,6 @@
 import { Build } from "src/Build/entity/Build.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Work } from "src/Work/entity/Work.entity";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({ name: "department" })
 export class Department {
@@ -18,4 +19,8 @@ export class Department {
     // Department[] => Build
     @ManyToOne(() => Build, (build => build.departments), { onDelete: "CASCADE" })
     build: Build;
+
+    // Department => Work[]
+    @OneToMany(()=>Work, (work=>work.department), {onDelete : "CASCADE"})
+    works : Work[]
 }
