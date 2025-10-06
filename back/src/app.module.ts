@@ -6,7 +6,9 @@ import { TypeOrmModule } from "@nestjs/typeorm"
 import { UserModule } from './User/User.module';
 import { RoleModule } from './Role/Role.module';
 import { BuildModule } from './Build/entity/Build.module';
-import { Department } from './Department/entity/Department.entity';
+import { DepartmentModule } from './Department/Department.module';
+import { ServiceModule } from './Services/Service.module';
+import { WorkModule } from './Work/work.module';
 
 @Module({
   imports: [
@@ -32,7 +34,9 @@ import { Department } from './Department/entity/Department.entity';
     UserModule,
     RoleModule,
     BuildModule,
-    Department
+    DepartmentModule,
+    ServiceModule,
+    WorkModule
 
   ],
   controllers: [AppController],
