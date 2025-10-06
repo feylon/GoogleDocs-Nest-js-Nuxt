@@ -11,6 +11,7 @@ import { ServiceModule } from './Services/Service.module';
 import { WorkModule } from './Work/work.module';
 import { ApealModule } from './Apeals/Apeal.module';
 import { RefreshTokenModule } from './RefreshToken/RefreshToken.module';
+import { StarterModule } from './starter/starter.module';
 
 @Module({
   imports: [
@@ -25,15 +26,10 @@ import { RefreshTokenModule } from './RefreshToken/RefreshToken.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-
-      // Entity va migration yo‘llari
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      migrations: [__dirname + '/migrations/*{.ts,.js}'],
-
-      synchronize: false, // ❌ endi TypeORM avtomatik o‘zgartirmaydi
-      migrationsRun: false, // ❌ Nest startda avtomatik migration ishlamasin
-      autoLoadEntities: true,
-      logging: true, // foydali: querylarni ko‘rsatadi
+      synchronize : true,
+      autoLoadEntities : true,
+      // dropSchema : true
+      
     }),
 
     // Modullar
@@ -45,6 +41,7 @@ import { RefreshTokenModule } from './RefreshToken/RefreshToken.module';
     WorkModule,
     ApealModule,
     RefreshTokenModule,
+    StarterModule
   ],
   controllers: [AppController],
   providers: [AppService],

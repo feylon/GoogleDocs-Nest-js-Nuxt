@@ -14,7 +14,7 @@ export class User {
     @Column({ type: 'varchar', length: 500, unique: true, nullable: false })
     login: string;
 
-    @Column({ type: "varchar", length: 500 })
+    @Column({ type: "varchar", length: 500, nullable : true })
     profileUrl: string;
 
     @Column({ type: 'varchar', length: 500, nullable: false })
@@ -41,7 +41,7 @@ export class User {
     @Column({ type: "varchar", unique: true, length: 500, nullable: false })
     phone: string;
 
-    @Column({ type: 'varchar', length: 500 })
+    @Column({ type: 'varchar', length: 500, nullable : true })
     resetPasswordToken: string;
 
     @Column({ type: "boolean", default: true })
@@ -108,7 +108,7 @@ export class User {
     @OneToMany(() => User, (user => user.admin))
     users: User[];
 
-    private async hashPassword(str: string): Promise<string> {
+     async hashPassword(str: string): Promise<string> {
         const salt = await bcrypt.genSalt(10);
 
         const hashPassword = await bcrypt.hash(str, salt);
