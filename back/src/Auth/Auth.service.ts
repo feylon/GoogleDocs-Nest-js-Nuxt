@@ -8,6 +8,7 @@ import { LoginDTO } from "./DTO/dto";
 import { SENDBODY } from "GlobalTypes/GlobalTypes";
 import * as bcrypt from "bcrypt";
 import { RefreshTokenService } from "src/RefreshToken/RefreshToken.service";
+import { RefreshTokenBody } from "src/RefreshToken/types";
 @Injectable()
 export class AuthService {
 
@@ -15,7 +16,7 @@ export class AuthService {
         @InjectRepository(User) private UserRepository: Repository<User>,
         @InjectRepository(RefreshToken) private RefreshTokenRepository: Repository<RefreshToken>,
         @InjectRepository(Role) private RoleRepository: Repository<Role>,
-        private readonly RefreshTokenService : RefreshTokenService
+        private readonly RefreshTokenService: RefreshTokenService
     ) { }
 
     async checkHash(password: string, hash: string): Promise<boolean> {
@@ -50,16 +51,25 @@ export class AuthService {
             if (!isMatch) throw new HttpException({
                 message: "Parol yoki login xato",
             }, HttpStatus.UNAUTHORIZED);
-            
-            const userObj = {
-                id : user?.id,
-                role : user?.role?.name
-            }
+
+            const userObj: RefreshTokenBody = {
+                id: user?.id,
+                role: user?.role?.name,
+                user: user
+            };
+            const tokens = await this.RefreshTokenService.genaratedToken(userObj);
+
+            const { accessToken, refreshToken } = tokens;
+
+
+            if (!accessToken && !refreshToken) new HttpException({ message: "Tokenlar yaratilmadi" }, HttpStatus.INTERNAL_SERVER_ERROR)
 
             return {
-                data: userObj,
+                data: {
+                    accessToken, refreshToken
+                },
                 success: true,
-                message: "Test uchun bu mavjud",
+                message: "Login amalga oshirildi",
 
             }
         } catch (error) {

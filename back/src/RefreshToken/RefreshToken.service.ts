@@ -14,7 +14,7 @@ export class RefreshTokenService {
 
     async genaratedToken(payload: RefreshTokenBody): Promise<{
         accessToken: string | null,
-        refreshTOken: string | null
+        refreshToken: string | null
     }> {
         const newAccessToken = jwt.sign({ id: payload.id, role: payload.role }, process.env.ACCESS_TOKEN as string, { expiresIn: '1d' });
         const newRefreshToken = jwt.sign({ id: payload.id, role: payload.role }, process.env.REFRESH_TOKEN as string, { expiresIn: '15d' });
@@ -26,13 +26,13 @@ export class RefreshTokenService {
 
             return {
                 accessToken: newAccessToken,
-                refreshTOken: newRefreshToken
+                refreshToken: newRefreshToken
             }
         } catch (error) {
             console.log("Tokenlarni saqlashda muommo yuz berdi", error)
             return {
                 accessToken: null,
-                refreshTOken: null
+                refreshToken: null
             }
         }
     }
