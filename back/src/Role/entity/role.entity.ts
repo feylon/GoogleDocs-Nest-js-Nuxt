@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Up
 import { ERoles } from "../types/TypeRoles";
 import { User } from "src/User/entity/User.entity";
 
-@Entity()
+@Entity({name : "role"})
 export class Role {
     @PrimaryGeneratedColumn('uuid')
     id: string;
