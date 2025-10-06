@@ -1,5 +1,6 @@
 import { Department } from "src/Department/entity/Department.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from "src/User/entity/User.entity";
+import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({name : "work"})
 export class Work {
@@ -19,4 +20,8 @@ export class Work {
     @ManyToOne(()=>Department, (department=>department.works), {cascade : true})
     department : Department;
 
+
+    // Work [] => User []
+    @ManyToMany(()=>User, (user=>user.works))
+    users : User[]
 }

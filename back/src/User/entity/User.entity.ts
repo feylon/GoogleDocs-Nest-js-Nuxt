@@ -1,5 +1,6 @@
 import { Role } from "src/Role/entity/role.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Work } from "src/Work/entity/Work.entity";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({ name: "Users" })
 export class User {
@@ -58,4 +59,24 @@ export class User {
         onDelete : "RESTRICT"
     })
     role: Role;
+
+    @ManyToMany(()=>Work, (work=>work.users), {
+        cascade : true,
+        eager : true
+    })
+
+    // User[] => Work[]
+    @JoinTable({
+        name : "user_works",
+        joinColumn : {
+            referencedColumnName : "id",
+            name : "user_id"
+            
+        },
+        inverseJoinColumn : {
+            name : "work_id",
+            referencedColumnName : "id"
+        }
+    })
+    works : Work;
 }
