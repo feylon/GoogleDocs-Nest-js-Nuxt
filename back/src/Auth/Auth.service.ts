@@ -44,7 +44,7 @@ export class AuthService {
                 }
             });
             if (!user) throw new HttpException({
-                message: "User topilmadi"
+                message: "Parol yoki login xato"
             }, HttpStatus.UNAUTHORIZED);
 
             const isMatch = await this.checkHash(password, user.password);
