@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, OnModuleInit } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -13,6 +13,7 @@ import { ApealModule } from './Apeals/Apeal.module';
 import { RefreshTokenModule } from './RefreshToken/RefreshToken.module';
 import { StarterModule } from './starter/starter.module';
 import { AuthModule } from './Auth/Auth.module';
+import { TokenMiddleware } from './tokenChecker/token.middleware';
 
 @Module({
   imports: [
@@ -27,10 +28,10 @@ import { AuthModule } from './Auth/Auth.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      synchronize : true,
-      autoLoadEntities : true,
+      synchronize: true,
+      autoLoadEntities: true,
       // dropSchema : true
-      
+
     }),
 
     // Modullar
@@ -50,8 +51,17 @@ import { AuthModule } from './Auth/Auth.module';
 })
 
 
-export class AppModule implements OnModuleInit {
+export class AppModule implements OnModuleInit, NestModule {
   onModuleInit() {
     console.log("Start")
+  }
+
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(TokenMiddleware).exclude(
+       '/login'
+      )
+      .forRoutes('*');
   }
 }
