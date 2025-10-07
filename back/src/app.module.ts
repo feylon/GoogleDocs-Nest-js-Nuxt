@@ -60,7 +60,7 @@ export class AppModule implements OnModuleInit, NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(TokenMiddleware).exclude(
-       '/login'
+       'auth/login'
       )
       .forRoutes('*');
   }
