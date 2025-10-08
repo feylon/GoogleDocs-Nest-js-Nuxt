@@ -5,7 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from "@nestjs/typeorm"
 import { UserModule } from './User/User.module';
 import { RoleModule } from './Role/Role.module';
-import { BuildModule } from './Build/entity/Build.module';
+import { BuildModule } from './Build/Build.module'; 
 import { DepartmentModule } from './Department/Department.module';
 import { ServiceModule } from './Services/Service.module';
 import { WorkModule } from './Work/work.module';
