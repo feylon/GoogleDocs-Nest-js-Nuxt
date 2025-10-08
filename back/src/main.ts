@@ -8,6 +8,7 @@ import { ValidationPipe } from '@nestjs/common';
   app.useGlobalPipes(new ValidationPipe({
     transform : true,
     forbidUnknownValues : true,
+    forbidNonWhitelisted : true,
     whitelist : true
   }))
   app.setGlobalPrefix('api1');
