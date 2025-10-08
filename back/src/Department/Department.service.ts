@@ -5,7 +5,7 @@ import { Repository } from "typeorm";
 import { Build } from "src/Build/entity/Build.entity";
 import { DepartmentDTO, EditDepartmentDTO } from "./entity/DepartmentDTO";
 import { SENDBODY } from "GlobalTypes/GlobalTypes";
-import { UUIDDTO } from "GlobalTypes/GlobalDTO";
+import { PaginationDto, UUIDDTO } from "GlobalTypes/GlobalDTO";
 
 @Injectable()
 export class DepartmanetService {
@@ -111,6 +111,37 @@ export class DepartmanetService {
 
     }
 
+  }
+
+
+  async getAllDepartment(pagination: PaginationDto): Promise<SENDBODY> {
+    let { page = 1, size = 10 } = pagination;
+    
+    try {
+      const departmentList = await this.DepartmentRepository.findAndCount({
+        skip: (page - 1) * size,
+        take: size,
+        order: { name: "ASC" }
+      });
+      const [data, total] = departmentList;
+
+      return {
+        success: true,
+        data: data,
+        page: page,
+        size: size,
+        totalpages: Math.ceil(total / size),
+        count : total
+      }
+    } catch (error) {
+      console.error(error);
+      throw new HttpException({
+        success: false,
+        message: 'Serverda xatolik yuz berdi',
+        error,
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
   }
 
 }

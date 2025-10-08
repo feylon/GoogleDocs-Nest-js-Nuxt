@@ -1,7 +1,7 @@
-import { Body, Controller, Param, Post, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { DepartmanetService } from "./Department.service";
 import { DepartmentDTO, EditDepartmentDTO } from "./entity/DepartmentDTO";
-import { UUIDDTO } from "GlobalTypes/GlobalDTO";
+import { PaginationDto, UUIDDTO } from "GlobalTypes/GlobalDTO";
 import { RolesGuard } from "src/rolecheck/rolecheck.guard";
 import { Roles } from "src/Role/types/roles.decorator";
 import { ERoles } from "src/Role/types/TypeRoles";
@@ -21,5 +21,11 @@ export class DepartmentController {
     @Put('/editDepartment/:id')
     editDepartment(@Body() body: EditDepartmentDTO, @Param() param: UUIDDTO) {
         return this.DepartmentService.editDepartment(param, body)
+    }
+
+    @Roles(ERoles.Superadmin)
+    @Get('getAllDepartment')
+    getAllDepartment(@Query() query: PaginationDto) {
+        return this.DepartmentService.getAllDepartment(query);
     }
 }
