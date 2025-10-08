@@ -13,7 +13,6 @@ export class TokenMiddleware implements NestMiddleware {
   constructor(@InjectDataSource() private datasource: DataSource) { }
   async use(@Req() req: Request, @Res() res: Response, next: () => void) {
     try {
-      console.log(process.env.ACCESS_TOKEN)
 
       if (!req.headers['authorization']) throw new Error();
       const bearer = req.headers['authorization'].split(' ')[1];

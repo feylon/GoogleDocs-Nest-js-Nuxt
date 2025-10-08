@@ -6,5 +6,8 @@ export interface SENDBODY {
     page?: number,
     size?: number,
     totalpages?: number;
-    error? : any
+    error? : any,
+    count?:number
 }
+
+
