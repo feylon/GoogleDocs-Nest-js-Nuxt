@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/User/entity/User.entity";
 import { Repository } from "typeorm";
 import { Service } from "./entity/Services.entity";
-import { changeActivateDTO, CreateServiceDTO } from "./ServiceDTO";
+import { changeActivateDTO, CreateServiceDTO, CreateServiceEditDTO } from "./ServiceDTO";
 import { ERoles } from "src/Role/types/TypeRoles";
 import { SENDBODY } from "GlobalTypes/GlobalTypes";
 import { UUIDDTO } from "GlobalTypes/GlobalDTO";
@@ -58,6 +58,12 @@ export class Service_Service {
             const [data, count] = await this.ServiceRepository.findAndCount({
                 where: {
                     active: true
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    description: true,
+                    createdAt: true
                 }
             });
             return {
@@ -130,13 +136,84 @@ export class Service_Service {
             const savedService = await this.ServiceRepository.save(editForService);
             return {
                 data: savedService,
-                 success : true
+                success: true
             }
         } catch (error) {
             if (error instanceof HttpException) throw error;
             console.log(error);
             throw new HttpException({}, HttpStatus.INTERNAL_SERVER_ERROR);
 
+        }
+    }
+
+
+    async EditService(body: CreateServiceEditDTO, id: UUIDDTO) {
+        const { id: serviceID } = id;
+        const { active, description, name, userID } = body;
+
+        try {
+
+            const editService = await this.ServiceRepository.findOne({
+                where: { id: serviceID },
+                relations: { user: true }
+            });
+
+            if (!editService)
+                throw new HttpException(
+                    { message: "Service topilmadi" },
+                    HttpStatus.NOT_FOUND
+                );
+
+
+            let user: any;
+            if (userID) {
+                user = await this.UserRepository.findOne({
+                    where: {
+                        id: userID,
+                        role: { name: ERoles.User }
+                    },
+                    relations: { role: true }
+                });
+
+                if (!user)
+                    throw new HttpException(
+                        { message: "User topilmadi" },
+                        HttpStatus.NOT_FOUND
+                    );
+
+                editService.user = user;
+            }
+
+            if (name !== undefined) editService.name = name;
+            if (description !== undefined) editService.description = description;
+            if (active !== undefined) editService.active = active;
+
+            const updatedService = await this.ServiceRepository.save(editService);
+
+            return {
+                success: true,
+                message: "Service muvaffaqiyatli yangilandi",
+                data: updatedService
+            };
+
+        } catch (error) {
+            if (error.code === '23505') {
+                throw new HttpException(
+                    {
+                        success: false,
+                        message: `"${body.name}" allaqachon yaratilgan`
+                    },
+                    HttpStatus.CONFLICT
+                );
+            }
+
+            if (error instanceof HttpException) throw error;
+
+            console.error("EditService Error:", error);
+            throw new HttpException(
+                { message: "Server xatosi" },
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 }

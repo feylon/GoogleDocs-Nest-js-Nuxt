@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsString, IsUUID, MaxLength, MinLength } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength, MinLength } from "class-validator";
 
 export class CreateServiceDTO {
     @IsNotEmpty()
@@ -29,4 +29,28 @@ export class changeActivateDTO {
     @IsBoolean()
     active: boolean;
 
+}
+
+export class CreateServiceEditDTO {
+    @IsOptional()
+    @MaxLength(15)
+    @MinLength(3)
+    @IsString()
+    name: string;
+
+
+    @IsOptional()
+    @MaxLength(200)
+    @MinLength(3)
+    @IsString()
+    description: string;
+
+    @IsOptional()
+    @IsBoolean()
+    active: boolean;
+
+    @IsOptional()
+    @IsUUID()
+    @IsString()
+    userID: string;
 }

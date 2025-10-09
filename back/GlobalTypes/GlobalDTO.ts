@@ -5,7 +5,6 @@ export class UUIDDTO {
     @IsUUID()
     @IsNotEmpty()
     @IsString()
-    @Type(()=>Number)
     id: string;
 }
 
