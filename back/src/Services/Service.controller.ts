@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { Service_Service } from "./Service.service";
-import { changeActivateDTO, CreateServiceDTO } from "./ServiceDTO";
+import { changeActivateDTO, CreateServiceDTO, CreateServiceEditDTO } from "./ServiceDTO";
 import { UUIDDTO } from "GlobalTypes/GlobalDTO";
 import { RolesGuard } from "src/rolecheck/rolecheck.guard";
 import { ERoles } from "src/Role/types/TypeRoles";
@@ -32,5 +32,11 @@ export class ServiceController {
     @Put('/changeActive/:id')
     changeActive(@Body() body: changeActivateDTO, @Param() param: UUIDDTO) {
         return this.Service_Service.changeActive(body, param);
+    }
+
+    @Roles(ERoles.Superadmin)
+    @Put('/EditService/:id')
+    EditService(@Body() body: CreateServiceEditDTO, @Param() param: UUIDDTO) {
+        return this.Service_Service.EditService(body, param)
     }
 }

@@ -2,7 +2,7 @@ import { IsBoolean, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength, MinLeng
 
 export class CreateServiceDTO {
     @IsNotEmpty()
-    @MaxLength(15)
+    @MaxLength(45)
     @MinLength(3)
     @IsString()
     name: string;
@@ -33,7 +33,7 @@ export class changeActivateDTO {
 
 export class CreateServiceEditDTO {
     @IsOptional()
-    @MaxLength(15)
+    @MaxLength(45)
     @MinLength(3)
     @IsString()
     name: string;

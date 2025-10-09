@@ -147,15 +147,15 @@ export class Service_Service {
     }
 
 
-    async EditService(body: CreateServiceEditDTO, id: UUIDDTO) {
-        const { id: serviceID } = id;
+    async EditService(body: CreateServiceEditDTO, param: UUIDDTO) {
+        const { id: serviceID } = param;
         const { active, description, name, userID } = body;
 
         try {
 
             const editService = await this.ServiceRepository.findOne({
                 where: { id: serviceID },
-                relations: { user: true }
+                // relations: { user: {} }
             });
 
             if (!editService)
@@ -172,7 +172,8 @@ export class Service_Service {
                         id: userID,
                         role: { name: ERoles.User }
                     },
-                    relations: { role: true }
+                    relations: { role: true },
+                    select : ['id',]
                 });
 
                 if (!user)
