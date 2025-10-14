@@ -25,5 +25,11 @@ export class UserController {
     EmployeeToUser(@Param() param: UUIDDTO) {
         return this.UserService.EmployeeToUser(param);
     }
+
+
+    @Put('UserToAdmin/:id')
+    UserToAdmin(@Param() param : UUIDDTO){
+        return this.UserService.UserToAdmin(param);
+    }
 }
 
