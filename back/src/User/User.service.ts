@@ -6,10 +6,14 @@ import { changeAdminRole, GetUserDto } from "./User.DTO";
 import { ERoles } from "src/Role/types/TypeRoles";
 import { SENDBODY } from "GlobalTypes/GlobalTypes";
 import { PaginationDto, UUIDDTO } from "GlobalTypes/GlobalDTO";
+import { Role } from "src/Role/entity/role.entity";
 
 @Injectable()
 export class UserService {
-    constructor(@InjectRepository(User) readonly UserRepository: Repository<User>) { }
+    constructor(
+        @InjectRepository(User) readonly UserRepository: Repository<User>,
+        @InjectRepository(Role) readonly RoleRepository: Repository<Role>
+    ) { }
 
     async getUserByCondition(query: GetUserDto): Promise<SENDBODY> {
         const { father, firstname, lastname, role, page = 1, size = 10 } = query;
@@ -65,7 +69,7 @@ export class UserService {
         }
     }
 
-    async EmployeeToUser(data: UUIDDTO) : Promise <SENDBODY> {
+    async EmployeeToUser(data: UUIDDTO): Promise<SENDBODY> {
         const { id } = data;
         try {
             const employee = await this.UserRepository.findOne({
@@ -75,23 +79,87 @@ export class UserService {
                         name: ERoles.Employee
                     }
                 },
-                relations : {
-                    role :true
+                relations: {
+                    role: true
                 }
             });
 
-        if(!employee) {
-            throw new HttpException({message : "Tashqi ishchi topilmadi"}, HttpStatus.NOT_FOUND);
-        }
-        employee.role.name = ERoles.User;
+            if (!employee) {
+                throw new HttpException({ message: "Tashqi ishchi topilmadi" }, HttpStatus.NOT_FOUND);
+            }
+            const newRole = await this.RoleRepository.findOne({
+                where: {
+                    name: ERoles.User
+                }
+            });
 
-        const changeUser = await this.UserRepository.save(employee);
 
-        return {
-            message : "Tahrirlandi",
-            success : true
-        }
+            if (!newRole) {
+                throw new HttpException({ message: "Rol topilmadi" }, HttpStatus.NOT_FOUND);
+            }
+
+
+            employee.role = newRole;
+            const savedEmployee = await this.UserRepository.save(employee);
+            return {
+                message: "Tahrirlandi",
+                success: true,
+                data: null
+            }
         } catch (error) {
+            if (error instanceof HttpException) throw error;
+            console.error(error);
+            throw new HttpException({
+                success: false,
+                message: 'Serverda xatolik yuz berdi',
+                error,
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+
+    }
+
+
+
+    async UserToAdmin(data: UUIDDTO): Promise<SENDBODY> {
+        const { id } = data;
+        try {
+            const employee = await this.UserRepository.findOne({
+                where: {
+                    id: id,
+                    role: {
+                        name: ERoles.User
+                    }
+                },
+                relations: {
+                    role: true
+                }
+            });
+
+            if (!employee) {
+                throw new HttpException({ message: "Xodim topilmadi" }, HttpStatus.NOT_FOUND);
+            }
+            const newRole = await this.RoleRepository.findOne({
+                where: {
+                    name: ERoles.Admin
+                }
+            });
+
+
+            if (!newRole) {
+                throw new HttpException({ message: "Rol topilmadi" }, HttpStatus.NOT_FOUND);
+            }
+
+
+            employee.role = newRole;
+            const savedEmployee = await this.UserRepository.save(employee);
+            return {
+                message: "Tahrirlandi",
+                success: true,
+                data: null
+            }
+        } catch (error) {
+            if (error instanceof HttpException) throw error;
             console.error(error);
             throw new HttpException({
                 success: false,
