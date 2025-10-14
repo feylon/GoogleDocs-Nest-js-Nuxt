@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsEnum, IsNumber, IsOptional, IsString, MaxLength, Min } from "class-validator";
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, MaxLength, Min } from "class-validator";
 import { ERoles } from "src/Role/types/TypeRoles";
 
 export class GetUserDto {
@@ -37,4 +37,20 @@ export class GetUserDto {
     @IsNumber()
     size: number;
 
+}
+
+
+export class changeAdminRole {
+
+    @IsUUID()
+    @IsNotEmpty()
+    @IsString()
+    userId: string;
+
+
+
+    @IsUUID()
+    @IsNotEmpty()
+    @IsString()
+    adminId : string;
 }

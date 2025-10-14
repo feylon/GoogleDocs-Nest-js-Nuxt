@@ -117,11 +117,11 @@ export class User {
 
     }
 
-    @BeforeInsert()
-    @BeforeUpdate()
-    async CreateOrUpdatedUser() {
-        if (this.password && !this.password.startsWith('$2b$')) {
-            this.password = await this.hashPassword(this.password)
-        }
-    }
+    // @BeforeInsert()
+    // @BeforeUpdate()
+    // async CreateOrUpdatedUser() {
+    //     if (this.password && !this.password.startsWith('$2b$')) {
+    //         this.password = await this.hashPassword(this.password)
+    //     }
+    // }
 }

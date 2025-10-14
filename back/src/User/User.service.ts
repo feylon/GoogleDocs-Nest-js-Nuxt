@@ -2,10 +2,10 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { FindOptionsWhere, ILike, Repository } from "typeorm";
 import { User } from "./entity/User.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { GetUserDto } from "./User.DTO";
+import { changeAdminRole, GetUserDto } from "./User.DTO";
 import { ERoles } from "src/Role/types/TypeRoles";
 import { SENDBODY } from "GlobalTypes/GlobalTypes";
-import { PaginationDto } from "GlobalTypes/GlobalDTO";
+import { PaginationDto, UUIDDTO } from "GlobalTypes/GlobalDTO";
 
 @Injectable()
 export class UserService {
@@ -32,7 +32,19 @@ export class UserService {
             const [data, count] = await this.UserRepository.findAndCount({
                 where,
                 skip: (page - 1) * size,
-                take: size
+                take: size,
+                select: {
+                    id: true,
+                    login: true,
+                    profileUrl: true,
+                    firstname: true,
+                    lastname: true,
+                    father: true,
+                    JSHSHIR: true,
+                    birthday: true,
+                    email: true,
+                    phone: true
+                }
             });
 
             return {
@@ -53,7 +65,42 @@ export class UserService {
         }
     }
 
+    async EmployeeToUser(data: UUIDDTO) : Promise <SENDBODY> {
+        const { id } = data;
+        try {
+            const employee = await this.UserRepository.findOne({
+                where: {
+                    id: id,
+                    role: {
+                        name: ERoles.Employee
+                    }
+                },
+                relations : {
+                    role :true
+                }
+            });
 
+        if(!employee) {
+            throw new HttpException({message : "Tashqi ishchi topilmadi"}, HttpStatus.NOT_FOUND);
+        }
+        employee.role.name = ERoles.User;
 
+        const changeUser = await this.UserRepository.save(employee);
+
+        return {
+            message : "Tahrirlandi",
+            success : true
+        }
+        } catch (error) {
+            console.error(error);
+            throw new HttpException({
+                success: false,
+                message: 'Serverda xatolik yuz berdi',
+                error,
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+
+    }
 
 }
